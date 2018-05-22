@@ -23,7 +23,7 @@ public class Game extends Canvas implements Runnable{
 
 	
 	//The size and scaling of the game. SCALE is VERY useful (change to make EVERYTHING it bigger/smaller)
-	public static final int WIDTH = 160;
+	public static final int WIDTH = 300;
 	public static final int HEIGHT = WIDTH/12 * 9;
 	public static final int SCALE = 3;
 	public final String NAME = "Age of Civilizations";
@@ -37,6 +37,8 @@ public class Game extends Canvas implements Runnable{
 	//This is the 'sprite sheet' that is used for all loaded images. Rather than many images, all are
 	//in one sheet.
 	private BufferedImage spriteSheet = null;
+	
+	Map field;
 	
 	public Game() //This is the constructor for this class. Here, we set up the GUI
 	{
@@ -68,23 +70,25 @@ public class Game extends Canvas implements Runnable{
 	{
 		
 		//Load in the spritesheet (saved in res folder)
-		BufferedImageLoader loader = new BufferedImageLoader();
-		try {
-			spriteSheet = loader.loadImage("/sprite_sheet.png");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		//BufferedImageLoader loader = new BufferedImageLoader();
+		//try {
+		//	spriteSheet = loader.loadImage("/sprite_sheet.png");
+		//} catch (IOException e) {
+		//	e.printStackTrace();
+		//}
 		
 		//Used for KeyInput (uses another class to do this)
 		requestFocus();
 		addKeyListener(new KeyInput(this));
 		
 		//Uses the SpriteSheet class to get a specific image from the sprite sheet
-		SpriteSheet ss = new SpriteSheet(spriteSheet);
+		//SpriteSheet ss = new SpriteSheet(spriteSheet);
 		
 		//This would return an image at the top left that is 1 'unit' x 1 'unit'
 		//See SpriteSheet class for more info
 		//ss.grabImage(0, 0, 1, 1); 
+		
+		field = new Map(0);
 	}
 	
 	public synchronized void start() //This is what's first called from the main method.
@@ -180,7 +184,7 @@ public class Game extends Canvas implements Runnable{
 		
 		g.setColor(Color.BLACK);//Go ahead and change this color (like CYAN or WHITE, etc)
 		g.fillRect(0, 0, getWidth(), getHeight());//This just fills the screen in that color
-		
+		field.render(g);
 		
 		//////////// End of Drawing Stuff to screen		////////////////////////
 		

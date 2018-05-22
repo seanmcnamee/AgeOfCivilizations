@@ -1,5 +1,6 @@
 package game;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 public class Tile {
@@ -41,7 +42,9 @@ public class Tile {
 	
 	public void render(Graphics g)
 	{
-		
+		g.setColor(Color.BLUE);
+		//System.out.println(xPos + " " + yPos);
+		g.fillRect(xPos*(TILESIZE+1), yPos*(TILESIZE+1), TILESIZE, TILESIZE);
 	}
 	
 	

@@ -23,27 +23,51 @@ public class Map {
 		}
 	}
 	
+	//These multipliers are a bit sketchy but they keep it looking okay.
 	private void createPangea()
 	{
-		map = genContinentArr(50);
+		map = genContinentArr(45, 50);
 	}
 	
 	private void createDualContinents()
 	{
-		Tile[][] leftHalf = genContinentArr(25);
-		Tile[][] rightHalf = genContinentArr(25);
+		Tile[][] leftHalf = genContinentArr(30, 25);
+		Tile[][] rightHalf = genContinentArr(30, 25);
 		
-		Tile[][] dualContinents = new Tile[leftHalf.length + rightHalf.length][leftHalf[0].length];
+		int height = leftHalf[0].length;
+		if (rightHalf[0].length > leftHalf[0].length)
+		{
+			height = rightHalf[0].length;
+		}
+		
+		Tile[][] dualContinents = new Tile[leftHalf.length + rightHalf.length][height];
+		
+		System.out.println("Left Half: " + leftHalf.length + ", " + leftHalf[0].length);
+		System.out.println("Right Half: " + rightHalf.length + ", " + rightHalf[0].length);
+		System.out.println("Total: " + dualContinents.length + ", " + dualContinents[0].length);
+		
 		for (int x = 0; x < dualContinents.length; x++)
 		{
 			for (int y = 0; y < dualContinents[x].length; y++)
 			{
 				if (x < leftHalf.length)
 				{
-					dualContinents[x][y] = leftHalf[x][y];
+					if (y < leftHalf[x].length) {
+						dualContinents[x][y] = leftHalf[x][y];
+					}	else
+					{
+						dualContinents[x][y] = new Tile(x, y, false);
+					}
+					
 				}	else
 				{
-					dualContinents[x][y] = new Tile(x, y, rightHalf[x % leftHalf.length][y].getYieldable());
+					if (y < rightHalf[x % leftHalf.length].length) {
+						dualContinents[x][y] = new Tile(x, y, rightHalf[x % leftHalf.length][y].getYieldable());
+					}	else
+					{
+						dualContinents[x][y] = new Tile(x, y, false);
+					}
+					
 				
 				}
 			}
@@ -91,7 +115,11 @@ public class Map {
 		{
 			for (int y = 0; y < map[x].length; y++)
 			{
-				map[x][y].render(g);
+				if (map[x][y].getYieldable()) 
+				{
+					map[x][y].render(g);
+				}
+				
 			}
 		}
 	}
@@ -113,7 +141,7 @@ public class Map {
 	
 	//Oversees generating a single continent of radius 'mapSize'
 	//That is a 2-D array of Tiles.
-	private Tile[][] genContinentArr(int mapSize)
+	private Tile[][] genContinentArr(int mapSize, int multiplier)
 	{
 		Tile[][] continent = null;;
 		generationMap = new ArrayList<Tile> ();
@@ -121,11 +149,13 @@ public class Map {
 		generationMap.add(new Tile(0, 0, true));
 		int dir = 0;
 		
-		continentGen(3000, dir, 0, 0, mapSize/2);
+		continentGen(multiplier*mapSize, dir, 0, 0, mapSize/2);
 		
 		continent = convertToArray(generationMap);
-		continent = thickenMap(continent);
 		generationMap = null;
+		
+		continent = thickenMap(continent);
+		continent = shiftChunks(continent);
 		
 		return continent;
 	}
@@ -270,29 +300,31 @@ public class Map {
 		{
 			for (int c = outerborder; c < barrenMap[r].length-(outerborder-1); c++)
 			{
-				//newMap[r][c].setCount(10);
-				//System.out.println("at (" + r + ", " + c + ")");
-				//When at the proper altitude
-				//System.out.println("Successfully found altitude at (" + r + ", " + c + ") +" + map[r][c].getCount() );
-				
-				int rad = 2; //The usual size of a given sphere..
-				//System.out.println("Sphere of size " + rad + " at (" + r + ", " + c + ")");
-
-				
-				//Go all the way around and create the sphere
-				for (double theta = 0; theta < Math.PI*2; theta += Math.PI/30)
+				if (barrenMap[r][c].getYieldable())
 				{
-					for (int radius = rad; radius > 0; radius --)
+					//newMap[r][c].setCount(10);
+					//System.out.println("at (" + r + ", " + c + ")");
+					//When at the proper altitude
+					//System.out.println("Successfully found altitude at (" + r + ", " + c + ") +" + map[r][c].getCount() );
+					
+					int rad = 2; //The usual size of a given sphere..
+					//System.out.println("Sphere of size " + rad + " at (" + r + ", " + c + ")");
+
+					
+					//Go all the way around and create the sphere
+					for (double theta = 0; theta < Math.PI*2; theta += Math.PI/30)
 					{
-						int xPos = (int) (Math.cos(theta)*radius) + r;
-						int yPos = (int) (Math.sin(theta)*radius) + c;
-						
-						//System.out.println("At (" + xPos + ", " + yPos + ") Altitude: " + toMap[xPos][yPos].getCount());
-						
-						newMap[xPos][yPos] = new Tile(xPos-r + barrenMap[r][c].getX(), yPos-c + barrenMap[r][c].getY(), true);
+						for (int radius = rad; radius > 0; radius --)
+						{
+							int xPos = (int) (Math.cos(theta)*radius) + r;
+							int yPos = (int) (Math.sin(theta)*radius) + c;
+							
+							//System.out.println("At (" + xPos + ", " + yPos + ") Altitude: " + toMap[xPos][yPos].getCount());
+							
+							newMap[xPos][yPos] = new Tile(xPos-r + barrenMap[r][c].getX(), yPos-c + barrenMap[r][c].getY(), true);
+						}
 					}
 				}
-					
 			}
 		}
 		
