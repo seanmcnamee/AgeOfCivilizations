@@ -1,5 +1,6 @@
 package game;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Map {
@@ -9,38 +10,128 @@ public class Map {
 	
 	public Map(int type)
 	{
-		init();
+		generationMap = new ArrayList<Tile> ();
 		if (type == 0) //PANGEA
 		{
 			createPangea();
 		}	else if (type == 1)  //Two continents
 		{
-			
+			createDualContinents();
 		}	else if (type == 2)
 		{
 			
 		}
 	}
 	
-	private void init()
-	{
-		generationMap = new ArrayList<Tile> ();
-	}
-	
 	private void createPangea()
 	{
-		generationMap.add(new Tile(0, 0, true));
-		int dir = 0;
-		int mapSize = 50;
-		
-		pangeaGen(3000, dir, 0, 0, mapSize/2);
-		
-		map = convertToArray(generationMap);
-		map = thickenMap(map);
-		generationMap = null;
+		map = genContinentArr(50);
 	}
 	
-	private String pangeaGen(int stepsLeft, int direction, int xInd, int yInd, int mapRad)
+	private void createDualContinents()
+	{
+		Tile[][] leftHalf = genContinentArr(25);
+		Tile[][] rightHalf = genContinentArr(25);
+		
+		Tile[][] dualContinents = new Tile[leftHalf.length + rightHalf.length][leftHalf[0].length];
+		for (int x = 0; x < dualContinents.length; x++)
+		{
+			for (int y = 0; y < dualContinents[x].length; y++)
+			{
+				if (x < leftHalf.length)
+				{
+					dualContinents[x][y] = leftHalf[x][y];
+				}	else
+				{
+					dualContinents[x][y] = new Tile(x, y, rightHalf[x % leftHalf.length][y].getYieldable());
+				
+				}
+			}
+		}
+		map = dualContinents;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * Ticking and Rendering the Map
+	 */
+	public void tick()
+	{
+		
+	}
+	
+	public void render(Graphics g)
+	{
+		for (int x = 0; x < map.length; x++)
+		{
+			for (int y = 0; y < map[x].length; y++)
+			{
+				map[x][y].render(g);
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * 
+	 * The following methods are the background
+	 * of generating maps. No code below here are
+	 * getters/setters
+	 * 
+	 */
+	
+	//Oversees generating a single continent of radius 'mapSize'
+	//That is a 2-D array of Tiles.
+	private Tile[][] genContinentArr(int mapSize)
+	{
+		Tile[][] continent = null;;
+		generationMap = new ArrayList<Tile> ();
+		
+		generationMap.add(new Tile(0, 0, true));
+		int dir = 0;
+		
+		continentGen(3000, dir, 0, 0, mapSize/2);
+		
+		continent = convertToArray(generationMap);
+		continent = thickenMap(continent);
+		generationMap = null;
+		
+		return continent;
+	}
+	
+	//Recursive Method that handles randomWalk.
+	private String continentGen(int stepsLeft, int direction, int xInd, int yInd, int mapRad)
 	{
 		//Set new direction (based on turning or going straight
 		int newDir = direction +  ((int) ( (Math.random()*4) -2 ) );
@@ -84,17 +175,10 @@ public class Map {
 		{
 			//Add Chunk
 			addTile(newX, newY, true);
-			return newDir + "" + pangeaGen(stepsLeft-1, newDir, newX, newY, mapRad);
+			return newDir + "" + continentGen(stepsLeft-1, newDir, newX, newY, mapRad);
 		}
 		return "";
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	//Used for map generation, converts the arraylist of chunks into an array of chunks
 	public Tile[][] convertToArray(ArrayList<Tile> toBeConverted)
@@ -173,7 +257,7 @@ public class Map {
 		return newMap;
 	}
 	
-	
+	//Makes sure there are no/minimal holes within the map
 	public Tile[][] thickenMap(Tile[][] barrenMap)
 	{
 		Tile[][] newMap = new Tile[barrenMap.length][barrenMap[0].length];
@@ -229,7 +313,21 @@ public class Map {
 		return newMap;
 	}
 	
-	
+	//Shifts tiles to have top left corner as 0,0
+	public Tile[][] shiftChunks(Tile[][] toBeShifted)
+	{
+		Tile[][] newMap = new Tile[toBeShifted.length][toBeShifted[0].length];
+		
+		for (int r = 0; r < newMap.length; r++)
+		{
+			for (int c = 0; c < newMap[r].length; c++)
+			{	
+				newMap[r][c] = new Tile(r, c, toBeShifted[r][c].getYieldable());
+			}
+		}
+		
+		return newMap;
+	}
 	
 	//Used for map generation. Adds a chunks to the arraylist
 	private boolean addTile(int x, int y, boolean addCount)

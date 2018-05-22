@@ -1,16 +1,20 @@
 package game;
 
+import java.awt.Graphics;
+
 public class Tile {
 	private int[] yield; //The index of the 'yield' represents what it is
 	private int xPos, yPos; //The x and y pos of where this tile is
+	private boolean yieldable;
 	
 	public static final int TILESIZE = 10;
 	
-	public Tile(int x, int y, boolean yieldable)
+	public Tile(int x, int y, boolean yieldcapable)
 	{
 		xPos = x;
 		yPos = y;
 		yield = randomizeYield();
+		yieldable = yieldcapable;
 	}
 	
 	private int[] randomizeYield()
@@ -26,9 +30,30 @@ public class Tile {
 		return aryNums;
 		//TODO actually randomize Yields.
 	}
+	
+	/*
+	 * Ticking and Rendering the Tile
+	 */
+	public void tick()
+	{
+		
+	}
+	
+	public void render(Graphics g)
+	{
+		
+	}
+	
+	
+	
+	/*
+	 * Getters/Setters
+	 */
 	public int[] getYield()	{	return yield;	}
+	public boolean getYieldable()	{	return yieldable;	}
 	public int getX()	{	return xPos;	}
 	public int getY()	{	return yPos;	}
+	
 	
 	public String toString()
 	{
