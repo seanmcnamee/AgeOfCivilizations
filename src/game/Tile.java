@@ -6,7 +6,7 @@ public class Tile {
 	
 	public static final int TILESIZE = 10;
 	
-	public Tile(int x, int y)
+	public Tile(int x, int y, boolean yieldable)
 	{
 		xPos = x;
 		yPos = y;
