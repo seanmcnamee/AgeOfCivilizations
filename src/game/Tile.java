@@ -7,6 +7,8 @@ public class Tile {
 	private int[] yield; //The index of the 'yield' represents what it is
 	private int xPos, yPos; //The x and y pos of where this tile is
 	private boolean yieldable;
+	private City ownedBy; //Tells what city has authority over this tile
+	
 	
 	public static final int TILESIZE = 10;
 	
@@ -16,6 +18,7 @@ public class Tile {
 		yPos = y;
 		yield = randomizeYield();
 		yieldable = yieldcapable;
+		ownedBy = null;
 	}
 	
 	private int[] randomizeYield()
@@ -56,6 +59,7 @@ public class Tile {
 	public boolean getYieldable()	{	return yieldable;	}
 	public int getX()	{	return xPos;	}
 	public int getY()	{	return yPos;	}
+	public void setCity(City c)	{	ownedBy = c;	}
 	
 	
 	public String toString()
