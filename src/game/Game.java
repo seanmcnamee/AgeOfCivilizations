@@ -13,11 +13,18 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import game.net.GameClient;
+import game.net.GameServer;
+
 
 //Our main class is 'Game'. Canvas is the GUI type screen that is created, and
 //allows for the game to be ran (run() and all those methods that are the brains)
 public class Game extends Canvas implements Runnable{
 
+	//Networking
+	private GameClient socketClient;
+	private GameServer socketServer;
+	
 	//Just sorta something, I always ignore it
 	private static final long serialVersionUID = 1L;
 
@@ -97,6 +104,9 @@ public class Game extends Canvas implements Runnable{
 	{
 		running = true;
 		new Thread(this).start();
+		
+		//Networking
+		socketClient = new GameClient(this, "localHost")
 	}
 	
 	public synchronized void stop()//Just stops the game by making running false...
