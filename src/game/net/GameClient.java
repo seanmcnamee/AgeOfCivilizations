@@ -40,14 +40,15 @@ public class GameClient extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("SERVER > " + new String(packet.getData()));
+			String message = new String(packet.getData());
+			System.out.println("SERVER > " + message);
 		}
 	}
 
 	public void sendData(byte[] data) {
 		DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, 1331);
 		try {
-			socket.send(packet);
+			this.socket.send(packet);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import game.net.GameClient;
 import game.net.GameServer;
@@ -96,6 +97,8 @@ public class Game extends Canvas implements Runnable{
 		//ss.grabImage(0, 0, 1, 1); 
 		
 		field = new Map(0);
+		
+		socketClient.sendData("ping".getBytes());
 	}
 	
 	public synchronized void start() //This is what's first called from the main method.
@@ -105,8 +108,14 @@ public class Game extends Canvas implements Runnable{
 		running = true;
 		new Thread(this).start();
 		
+		if (socketServer == null && JOptionPane.showConfirmDialog(this, "boi") == 0) {
+			socketServer = new GameServer(this);
+			socketServer.start();
+		}
+		
 		//Networking
-		socketClient = new GameClient(this, "localHost")
+		socketClient = new GameClient(this, "localHost");
+		socketClient.start();
 	}
 	
 	public synchronized void stop()//Just stops the game by making running false...
@@ -151,6 +160,7 @@ public class Game extends Canvas implements Runnable{
 			render();//Gameplay (display)
 			
 			//Prints out FPS and TPS dta
+			/*
 			if (System.currentTimeMillis() - lastTimer >= 1000)
 			{
 				lastTimer += 1000;
@@ -159,7 +169,7 @@ public class Game extends Canvas implements Runnable{
 				System.out.println("fps: " + frames + ", tps: " + ticks);
 				frames = 0;
 				ticks = 0;
-			}
+			}*/
 			
 		}
 	}
