@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
@@ -25,9 +26,9 @@ public class Game extends Canvas implements Runnable{
 	//The size and scaling of the game. SCALE is VERY useful (change to make EVERYTHING it bigger/smaller)
 	public static final int WIDTH = 300;
 	public static final int HEIGHT = WIDTH/12 * 9;
-	public static final int SCALE = 3;
+	public static final int SCALE = 6;
 	public final String NAME = "Age of Civilizations";
-	
+	public static int updateCount = 180;
 	//The JFrame is the GUI itself that everything goes onto
 	private JFrame frame;
 	
@@ -36,9 +37,9 @@ public class Game extends Canvas implements Runnable{
 	
 	//This is the 'sprite sheet' that is used for all loaded images. Rather than many images, all are
 	//in one sheet.
-	private BufferedImage spriteSheet = null;
 	
 	Map field;
+	ArrayList<Player> players;
 	
 	public Game() //This is the constructor for this class. Here, we set up the GUI
 	{
@@ -88,7 +89,13 @@ public class Game extends Canvas implements Runnable{
 		//See SpriteSheet class for more info
 		//ss.grabImage(0, 0, 1, 1); 
 		
-		field = new Map(0);
+		field = new Map(1);
+		players = new ArrayList<Player> ();
+		players.add(new Player("Sean"));
+		//players.add(new Player("TJ"));
+		players.get(0).createCity(field, 15, 15);
+		//players.get(0).createCity(field, 50, 20);
+		//players.get(1).createCity(field, 15, 20);
 	}
 	
 	public synchronized void start() //This is what's first called from the main method.
@@ -160,6 +167,16 @@ public class Game extends Canvas implements Runnable{
 		//Here you could call object.tick(), with a tick method in each of the classes you have for
 		//The game like (Player, Monster, Bullet, Obstacle, etc.)
 		//If certain methods need it, you can even have certain classes take in parameters
+		updateCount --;
+		if (updateCount <= 0)
+		{
+			for (int i = 0; i < players.size(); i++)
+			{
+				players.get(i).tick();
+			}
+			updateCount = 180;
+		}
+		
 		
 	}
 
@@ -185,6 +202,7 @@ public class Game extends Canvas implements Runnable{
 		g.setColor(Color.BLACK);//Go ahead and change this color (like CYAN or WHITE, etc)
 		g.fillRect(0, 0, getWidth(), getHeight());//This just fills the screen in that color
 		field.render(g);
+		players.get(0).render(g);
 		
 		//////////// End of Drawing Stuff to screen		////////////////////////
 		
@@ -196,7 +214,9 @@ public class Game extends Canvas implements Runnable{
 	//When a key is preesed down, this is called
 	public void keyPressed(KeyEvent e)
 	{
-		
+		players.get(0).getCities().get(0).expandControl(field.getMap());
+		players.get(0).getCities().get(1).expandControl(field.getMap());
+		players.get(1).getCities().get(0).expandControl(field.getMap());
 		//int key = e.getKeyCode();
 	}
 	

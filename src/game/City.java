@@ -1,13 +1,14 @@
 package game;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class City {
 
 	//This represents what 'Tiles' the city owns
 	private Tile[][] tilesOwned;
-	private int xPos, yPos; //The actual position of the city.
 	private int population;
+	private String ID;
 	//People will be atutomatically created based on a formula that takes in excess food
 	//Start
 	//2 citizens and 10 food
@@ -40,14 +41,13 @@ public class City {
 	 * 
 	 */
 	
-	public City(int xp, int yp, Tile[][] map) //Default City
+	public City(int xp, int yp, Tile[][] map, Player p)
 	{
-		xPos = xp;
-		yPos = yp;
-		tilesOwned = new Tile[3][3];
-		for (int x = xPos - 1; x <= xPos + 1; x++)
+		map[xp][yp].setCapital(true);
+		tilesOwned = new Tile[map.length][map[0].length];
+		for (int x = xp - 1; x <= xp + 1; x++)
 		{
-			for (int y = yPos - 1; y <= yPos + 1; y++)
+			for (int y = yp - 1; y <= yp + 1; y++)
 			{
 				tilesOwned[x][y] = map[x][y];
 				map[x][y].setCity(this);
@@ -66,70 +66,131 @@ public class City {
 			buildings[i] = 0;
 		}
 		yields[0] = 10;//Start with 10 food
-		
+		ID = p.getName() + p.getCities().size();
+		System.out.println(ID);
 	}
+	
+	
 	
 	public void expandControl(Tile[][] map)
 	{
 		
-		/*
-		//A random tile within is picked
-		Tile pickedTile = tilesOwned[(int) (Math.random()*tilesOwned.length)][(int) (Math.random()*tilesOwned[0].length)];
-		if (pickedTile.getX() > xPos)
+		ArrayList<Tile> possibles = getPossibleExpansions(map);
+		
+		if (possibles != null && possibles.size() > 0)
 		{
-			if ()
-		}	else
-		{
+			ArrayList<Tile> largest = new ArrayList<Tile> ();
+			
+			Tile toAdd = possibles.get(0);
+			for (int i = 0; i < possibles.size(); i++)
+			{
+				if (possibles.get(i).getYieldValue() > toAdd.getYieldValue())
+				{
+					toAdd = possibles.get(i);
+				}
+			}
+			
+			for (int i = 0; i < possibles.size(); i++)
+			{
+				if (possibles.get(i).getYieldValue() == toAdd.getYieldValue())
+				{
+					largest.add(possibles.get(i));
+				}
+			}
+			
+			toAdd = largest.get((int) (Math.random()*largest.size()));
+			
+			map[toAdd.getX()][toAdd.getY()].setCity(this);
+			tilesOwned[toAdd.getX()][toAdd.getY()] = map[toAdd.getX()][toAdd.getY()];
 			
 		}
-		*/
-		
-		//Start at the middle and randomWalk to an edge where another tile can be created.
 		
 	}
 	
-	private Tile[][] walkToEdge(int xP, int yP, int dir)
+	//Getters / Setters
+	//public int getX()	{	return xPos;	}
+	//public int getY()	{	return yPos;	}
+	public String getID()	{	return ID;	}
+	public int[] getYields()	{	return yields;	}
+	
+	
+	//Tick and Render
+	public void tick()
 	{
-		//Set new direction (based on turning or going straight
-		int newDir = dir +  ((int) ( (Math.random()*4) -2 ) );
-		if (newDir < 0)
+		System.out.println(ID + " yielding...");
+		for (int x = 0; x < tilesOwned.length; x++)
 		{
-			newDir += 4;
+			for (int y = 0; y < tilesOwned[x].length; y++)
+			{
+				if (tilesOwned[x][y] != null)
+				{
+					for (int i = 0; i < 5; i++)
+					{
+						yields[i] += tilesOwned[x][y].getYield()[i];
+					}
+				}
+			}
 		}
-		if (newDir > 3)
-		{
-			newDir -= 4;
-		}
-		//System.out.println(newDir);
-		
-		//Set change in x and y based on direction
-		int cX = 0;
-		int cY = 0;
-		if (newDir == 0 || newDir == 2)
-		{
-			cY = newDir == 0? -1:1;
-		}
-		if (newDir == 1 || newDir == 3)
-		{
-			cX = newDir == 3? -1:1;
-		}
-		
-		int newX = xP + cX;
-		int newY = yP + cY;
-		
-		
-		
-		
-		
-		
-		Tile[][] newOwned = new Tile[tilesOwned.length][tilesOwned[0].length];
-		
-		return newOwned;
 	}
 	
 	
-	public int getX()	{	return xPos;	}
-	public int getY()	{	return yPos;	}
+	/*
+	 * Helpers methods for expanding a City's control Tile.
+	 */
+	private ArrayList<Tile> getPossibleExpansions(Tile[][] map)
+	{
+		ArrayList<Tile> possibles = new ArrayList<Tile> ();
+		
+		for (int x = 1; x < map.length-1; x++)
+		{
+			for (int y = 1; y < map[x].length-1; y++)
+			{
+				if (tilesOwned[x][y] != null)
+				{
+					
+					//TODO fix this to make it up down left right only
+					for (int c = -1; c <= 1; c += 2)
+					{
+						for (int w = 0; w < 2; w++)
+						{
+							int cX = 0;
+							int cY = 0;
+							if (w == 0)
+							{
+								cX = c;
+							}	else
+							{
+								cY = c;
+							}
+							
+							if (tilesOwned[x+cX][y+cY] == null && map[x+cX][y+cY].getYieldable() && (map[x+cX][y+cY].getCity() == null))
+							{
+								possibles = addPossible(map[x+cX][y+cY], possibles);
+							}
+						}
+					}
+				}
+			}
+		}
+		return possibles;
+	}
+	
+	private ArrayList<Tile> addPossible(Tile t, ArrayList<Tile> possibles)
+	{
+		boolean shouldAdd = true;
+		for (int i = 0; i < possibles.size(); i++)
+		{
+			if (possibles.get(i) == t)
+			{
+				shouldAdd = false;
+			}
+		}
+		if (shouldAdd)
+		{
+			possibles.add(t);
+		}
+		return possibles;
+	}
 	
 	
 	

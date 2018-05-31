@@ -8,7 +8,8 @@ public class Tile {
 	private int xPos, yPos; //The x and y pos of where this tile is
 	private boolean yieldable;
 	private City ownedBy; //Tells what city has authority over this tile
-	
+	private boolean capital; //If this is the actual position of the city.
+	private String biome;
 	
 	public static final int TILESIZE = 10;
 	
@@ -19,6 +20,7 @@ public class Tile {
 		yield = randomizeYield();
 		yieldable = yieldcapable;
 		ownedBy = null;
+		capital = false;
 	}
 	
 	private int[] randomizeYield()
@@ -31,8 +33,58 @@ public class Tile {
 		 * Culture
 		 */
 		int[] aryNums = { 0, 0, 0, 0, 0 };
+		int type = (int) (Math.random()*4);
+		
+		if (Math.random() < .8)
+		{
+			if (type == 0)
+			{
+				biome = "Grasslands";
+				aryNums[0] = 2;
+			}	else if (type == 1)
+			{
+				biome = "Forest";
+				aryNums[1] = 2;
+			}	else if (type == 2)
+			{
+				biome = "Plains";
+				aryNums[0] = 1;
+				aryNums[1] = 1;
+			}	else if (type == 3)
+			{
+				biome = "Hill";
+				aryNums[2] = 2;
+			}
+		}	else
+		{
+			if (type == 0)
+			{
+				biome = "Mountain";
+				aryNums[2] = 4;
+				aryNums[3] = 1;
+			}	else if (type == 1)
+			{
+				biome = "Jungle";
+				aryNums[0] = 2;
+				aryNums[1] = 3;
+			}	else if (type == 2)
+			{
+				biome = "Marsh";
+				aryNums[0] = 4;
+			}	else if (type == 3)
+			{
+				biome = "Desert";
+			}
+		}
+		
+		
+		
+		
+		
 		return aryNums;
-		//TODO actually randomize Yields.
+		
+		
+		
 	}
 	
 	/*
@@ -46,8 +98,23 @@ public class Tile {
 	public void render(Graphics g)
 	{
 		g.setColor(Color.BLUE);
+		if (ownedBy != null)
+		{
+			if (ownedBy.getID().contains("TJ"))
+			{
+				g.setColor(Color.GREEN);
+			}	else
+			{
+				g.setColor(Color.RED);
+			}
+			if (capital)
+			{
+				g.setColor(Color.GRAY);
+			}
+			
+		}
 		//System.out.println(xPos + " " + yPos);
-		g.fillRect(xPos*(TILESIZE+1), yPos*(TILESIZE+1), TILESIZE, TILESIZE);
+		g.fillRect(xPos*(TILESIZE+1)*Game.SCALE, yPos*(TILESIZE+1)*Game.SCALE, TILESIZE*Game.SCALE, TILESIZE*Game.SCALE);
 	}
 	
 	
@@ -60,7 +127,18 @@ public class Tile {
 	public int getX()	{	return xPos;	}
 	public int getY()	{	return yPos;	}
 	public void setCity(City c)	{	ownedBy = c;	}
+	public City getCity()	{	return ownedBy;	}
+	public boolean isCapital()	{	return capital;	}
+	public void setCapital(boolean b)	{	capital = b;	}
 	
+	public int getYieldValue()	{
+		int val = 0;
+		for (int i = 0; i < yield.length; i++)
+		{
+			val+= yield[i];
+		}
+		return val;
+	}
 	
 	public String toString()
 	{

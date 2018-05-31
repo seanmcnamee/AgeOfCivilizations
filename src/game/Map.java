@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Map {
 
+	
 	private Tile[][] map;
 	private ArrayList<Tile> generationMap;
 	
@@ -98,7 +99,8 @@ public class Map {
 	
 	
 	
-	
+	//Getters / Setters
+	public Tile[][] getMap()	{	return map;	}
 	
 	
 	/*
