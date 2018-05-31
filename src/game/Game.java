@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 
 import game.net.GameClient;
 import game.net.GameServer;
+import game.net.packets.Packet00Login;
 
 
 //Our main class is 'Game'. Canvas is the GUI type screen that is created, and
@@ -23,8 +24,10 @@ import game.net.GameServer;
 public class Game extends Canvas implements Runnable{
 
 	//Networking
-	private GameClient socketClient;
-	private GameServer socketServer;
+	public GameClient socketClient;
+	public GameServer socketServer;
+	
+	public Player player;
 	
 	//Just sorta something, I always ignore it
 	private static final long serialVersionUID = 1L;
@@ -98,7 +101,31 @@ public class Game extends Canvas implements Runnable{
 		
 		field = new Map(0);
 		
-		socketClient.sendData("ping".getBytes());
+		
+		//Networking
+		/*
+		socketClient = new GameClient(this, "localHost");
+		socketClient.start();
+		
+		player = new PlayerMP(JOptionPane.showInputDialog(this,"Enter a username"), "localHost", 1331);
+		//System.out.println("=========" + player.getUserName() + "=========");
+		Packet00Login loginPack = new Packet00Login(player.getUserName());
+		if(socketServer!=null) {
+			socketServer.addConnection((PlayerMP)player, loginPack);
+		}
+		//socketClient.sendData("ping".getBytes());
+		loginPack.writeData(socketClient);
+		//Packet00Login loginPack = new Packet00Login(JOptionPane.showInputDialog(this,"Enter a username"));*/
+		
+		player = new PlayerMP(JOptionPane.showInputDialog(this, "Please enter a username"), null, -1);
+        //level.addEntity(player);
+        //if (!isApplet) {
+            Packet00Login loginPacket = new Packet00Login(player.getUserName());
+            if (socketServer != null) {
+                socketServer.addConnection((PlayerMP) player, loginPacket);
+            }
+            loginPacket.writeData(socketClient);
+        //}
 	}
 	
 	public synchronized void start() //This is what's first called from the main method.
@@ -108,14 +135,24 @@ public class Game extends Canvas implements Runnable{
 		running = true;
 		new Thread(this).start();
 		
-		if (socketServer == null && JOptionPane.showConfirmDialog(this, "boi") == 0) {
+		/*if (socketServer == null && JOptionPane.showConfirmDialog(this, "Enter username") == 0) {
 			socketServer = new GameServer(this);
-			socketServer.start();
+			socketServer.start();			
 		}
 		
 		//Networking
 		socketClient = new GameClient(this, "localHost");
-		socketClient.start();
+		socketClient.start();*/
+		
+		  // if (!isApplet) {
+	            if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
+	                socketServer = new GameServer(this);
+	                socketServer.start();
+	            }
+
+	            socketClient = new GameClient(this, "localhost");
+	            socketClient.start();
+	       // }
 	}
 	
 	public synchronized void stop()//Just stops the game by making running false...

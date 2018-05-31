@@ -8,11 +8,12 @@ import java.awt.image.BufferedImage;
 //tick() and render() methods would have to be called in those methods from Game
 public class Player {
 	
+	private String userName;
 	
 	
-	public Player()
+	public Player(String user)
 	{
-		
+		this.userName = user;
 	}
 	
 	public void tick()
@@ -23,6 +24,10 @@ public class Player {
 	public void render(Graphics g)
 	{
 		
+	}
+	
+	public String getUserName() {
+		return this.userName;
 	}
 
 }
