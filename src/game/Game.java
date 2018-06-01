@@ -177,7 +177,8 @@ public class Game extends Canvas implements Runnable{
 				{
 					if (players.get(i).getCities().get(l).getPop()*1.5 + 10 < players.get(i).getCities().get(l).getYields()[0])
 					{
-						players.get(i).getCities().get(l).expandControl(field.getMap());
+						//players.get(i).getCities().get(l).expandControl(field.getMap());
+						players.get(i).getCities().get(l).setPop(players.get(i).getCities().get(l).getPop()+1);
 					}
 				}
 			}

@@ -113,6 +113,7 @@ public class City {
 	public String getID()	{	return ID;	}
 	public int[] getYields()	{	return yields;	}
 	public int getPop(){	return population;	}
+	public void setPop(int p){	population = p;	}
 	
 	
 	//Tick and Render

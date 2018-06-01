@@ -39,6 +39,7 @@ public class UI {
 		g.drawString("Stone: " + y[2], 3*Game.WIDTH/amt, Game.HEIGHT/36*Game.SCALE);
 		g.drawString("Gold: " + y[3], 4*Game.WIDTH/amt, Game.HEIGHT/36*Game.SCALE);
 		g.drawString("Culture: " + y[4], 5*Game.WIDTH/amt, Game.HEIGHT/36*Game.SCALE);
+		g.drawString("Population: " + player.getCities().get(0).getPop(), 6*Game.WIDTH/amt, Game.HEIGHT/36*Game.SCALE);
 	
 		if (open)
 		{

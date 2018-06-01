@@ -139,6 +139,7 @@ public class Tile {
 		if (b)
 		{
 			harvesting = true;
+			yield[0] += 2;
 			//System.out.println("Tile " + xPos + ", " + yPos + " is harvestable");
 		}
 	}
