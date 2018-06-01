@@ -112,6 +112,7 @@ public class City {
 	//public int getY()	{	return yPos;	}
 	public String getID()	{	return ID;	}
 	public int[] getYields()	{	return yields;	}
+	public int getPop(){	return population;	}
 	
 	
 	//Tick and Render
@@ -122,7 +123,7 @@ public class City {
 		{
 			for (int y = 0; y < tilesOwned[x].length; y++)
 			{
-				if (tilesOwned[x][y] != null)
+				if (tilesOwned[x][y] != null && tilesOwned[x][y].getHarvesting())
 				{
 					for (int i = 0; i < 5; i++)
 					{
@@ -131,6 +132,11 @@ public class City {
 				}
 			}
 		}
+		yields[0] += 2;
+		System.out.println("Pop: " + population);
+		yields[0] -= population;
+		
+			//pop*1.5 + 10 > food
 	}
 	
 	

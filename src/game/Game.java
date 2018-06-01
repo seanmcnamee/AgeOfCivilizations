@@ -26,7 +26,7 @@ public class Game extends Canvas implements Runnable{
 	//The size and scaling of the game. SCALE is VERY useful (change to make EVERYTHING it bigger/smaller)
 	public static final int WIDTH = 300;
 	public static final int HEIGHT = WIDTH/12 * 9;
-	public static final int SCALE = 6;
+	public static final int SCALE = 4;
 	public final String NAME = "Age of Civilizations";
 	public static int updateCount = 180;
 	//The JFrame is the GUI itself that everything goes onto
@@ -173,6 +173,13 @@ public class Game extends Canvas implements Runnable{
 			for (int i = 0; i < players.size(); i++)
 			{
 				players.get(i).tick();
+				for (int l = 0; l < players.get(i).getCities().size(); l++)
+				{
+					if (players.get(i).getCities().get(l).getPop()*1.5 + 10 < players.get(i).getCities().get(l).getYields()[0])
+					{
+						players.get(i).getCities().get(l).expandControl(field.getMap());
+					}
+				}
 			}
 			updateCount = 180;
 		}
@@ -214,9 +221,9 @@ public class Game extends Canvas implements Runnable{
 	//When a key is preesed down, this is called
 	public void keyPressed(KeyEvent e)
 	{
-		players.get(0).getCities().get(0).expandControl(field.getMap());
-		players.get(0).getCities().get(1).expandControl(field.getMap());
-		players.get(1).getCities().get(0).expandControl(field.getMap());
+		//players.get(0).getCities().get(0).expandControl(field.getMap());
+		//players.get(0).getCities().get(1).expandControl(field.getMap());
+		//players.get(1).getCities().get(0).expandControl(field.getMap());
 		//int key = e.getKeyCode();
 	}
 	

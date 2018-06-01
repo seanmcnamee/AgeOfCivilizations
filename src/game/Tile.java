@@ -6,12 +6,13 @@ import java.awt.Graphics;
 public class Tile {
 	private int[] yield; //The index of the 'yield' represents what it is
 	private int xPos, yPos; //The x and y pos of where this tile is
-	private boolean yieldable;
+	private boolean yieldable, harvesting;
 	private City ownedBy; //Tells what city has authority over this tile
 	private boolean capital; //If this is the actual position of the city.
 	private String biome;
 	
-	public static final int TILESIZE = 10;
+	
+	public static final int TILESIZE = 2;
 	
 	public Tile(int x, int y, boolean yieldcapable)
 	{
@@ -21,6 +22,7 @@ public class Tile {
 		yieldable = yieldcapable;
 		ownedBy = null;
 		capital = false;
+		harvesting = false;
 	}
 	
 	private int[] randomizeYield()
@@ -129,7 +131,17 @@ public class Tile {
 	public void setCity(City c)	{	ownedBy = c;	}
 	public City getCity()	{	return ownedBy;	}
 	public boolean isCapital()	{	return capital;	}
-	public void setCapital(boolean b)	{	capital = b;	}
+	public void setHarvesting(boolean b){	harvesting = b;	}
+	public boolean getHarvesting()	{	return harvesting;	}
+	
+	public void setCapital(boolean b)	{
+		capital = b;
+		if (b)
+		{
+			harvesting = true;
+			//System.out.println("Tile " + xPos + ", " + yPos + " is harvestable");
+		}
+	}
 	
 	public int getYieldValue()	{
 		int val = 0;
